@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/user_service_db
+    username: user_service_user
+    password: StrongPassword_123
+  jpa:
+    hibernate:
+      ddl-auto: update   # Автоматически обновлять структуру БД (для разработки)
+    show-sql: true       # Логирование SQL-запросов (для отладки)
+  logging:
+    level:
+      org.hibernate.SQL: DEBUG   # Логирование SQL-запросов
