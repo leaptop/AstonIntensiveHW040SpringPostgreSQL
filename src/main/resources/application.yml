@@ -1,12 +1,23 @@
 spring:
+  application:
+    name: user-service
+
   datasource:
     url: jdbc:postgresql://localhost:5432/user_service_db
     username: user_service_user
     password: StrongPassword_123
+
   jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect   #Эта строка вроде как позволяет приложению
+    #запускаться даже если БД не работает
     hibernate:
-      ddl-auto: update   # Автоматически обновлять структуру БД (для разработки)
-    show-sql: true       # Логирование SQL-запросов (для отладки)
-  logging:
-    level:
-      org.hibernate.SQL: DEBUG   # Логирование SQL-запросов
+      ddl-auto: update          # Создаёт/обновляет таблицы автоматически (только для dev!)
+    show-sql: true              # Выводит SQL-запросы в консоль (удобно для отладки)
+    properties:
+      hibernate:
+        format_sql: true
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
