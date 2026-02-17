@@ -29,11 +29,11 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserResponse> create(@Valid @RequestBody UserRequest request) {  // @Valid включает валидацию
-        User user = User.builder()  // Маппинг DTO -> Entity (Lombok Builder)
-                .name(request.getName().trim())  // trim() вручную, если нужно
-                .email(request.getEmail().trim())
-                .age(request.getAge())
+    public ResponseEntity<UserResponse> create(@Valid @RequestBody UserRequest request) {
+        User user = User.builder()
+                .name(request.name())
+                .email(request.email())
+                .age(request.age())
                 .build();
         User saved = userRepository.save(user);
         return ResponseEntity.ok(new UserResponse(saved.getId(), saved.getName(), saved.getEmail(), saved.getAge()));
@@ -44,9 +44,9 @@ public class UserController {
         if (!userRepository.existsById(id)) return ResponseEntity.notFound().build();
         User user = User.builder()
                 .id(id)
-                .name(request.getName().trim())
-                .email(request.getEmail().trim())
-                .age(request.getAge())
+                .name(request.name())
+                .email(request.email())
+                .age(request.age())
                 .build();
         User saved = userRepository.save(user);
         return ResponseEntity.ok(new UserResponse(saved.getId(), saved.getName(), saved.getEmail(), saved.getAge()));
