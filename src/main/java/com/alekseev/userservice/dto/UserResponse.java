@@ -1,13 +1,13 @@
 package com.alekseev.userservice.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
-public class UserResponse {
-    private Long id;
-    private String name;
-    private String email;
-    private Integer age;
+/**
+ * DTO для ответов (только чтение).
+ * Record → автоматически: constructor, getters (name(), email() и т.д.), equals/hashCode/toString.
+ */
+public record UserResponse(
+        Long id,
+        String name,
+        String email,
+        Integer age
+) {
 }
