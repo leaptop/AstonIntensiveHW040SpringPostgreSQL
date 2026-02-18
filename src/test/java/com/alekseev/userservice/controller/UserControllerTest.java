@@ -1,7 +1,7 @@
 package com.alekseev.userservice.controller;
 
-import com.alekseev.userservice.entity.User;
-import com.alekseev.userservice.repository.UserRepository;
+import com.alekseev.userservice.dto.UserResponse;
+import com.alekseev.userservice.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -11,7 +11,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -23,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Тест только веб-слоя.
  * @WebMvcTest(UserController.class) — загружает ТОЛЬКО контроллер + MockMvc.
- * Всё остальное (репозиторий, сервис и т.д.) мокается.
+ * Всё остальное (сервис и т.д.) мокается.
  * Это делает тест очень быстрым и изолированным.
  */
 @WebMvcTest(UserController.class)
@@ -33,12 +32,12 @@ class UserControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Test
     void createUser_shouldReturnCreatedUser() throws Exception {
-        User savedUser = User.builder().id(1L).name("Stepan").email("stepan@example.com").age(30).build();
-        when(userRepository.save(any(User.class))).thenReturn(savedUser);
+        UserResponse response = new UserResponse(1L, "Stepan", "stepan@example.com", 30);
+        when(userService.create(any())).thenReturn(response);
 
         String json = """
                 {
@@ -59,9 +58,8 @@ class UserControllerTest {
     @Test
     void updateUser_shouldReturnUpdatedUser() throws Exception {
         Long id = 1L;
-        User updatedUser = User.builder().id(id).name("Updated Stepan").email("updated@example.com").age(31).build();
-        when(userRepository.existsById(id)).thenReturn(true);
-        when(userRepository.save(any(User.class))).thenReturn(updatedUser);
+        UserResponse response = new UserResponse(id, "Updated Stepan", "updated@example.com", 31);
+        when(userService.update(eq(id), any())).thenReturn(response);
 
         String json = """
                 {
@@ -82,10 +80,10 @@ class UserControllerTest {
 
     @Test
     void getAllUsers_shouldReturnListOfUsers() throws Exception {
-        User user1 = User.builder().id(1L).name("Stepan").email("stepan@example.com").age(30).build();
-        User user2 = User.builder().id(2L).name("Anna").email("anna@example.com").age(25).build();
-        List<User> users = Arrays.asList(user1, user2);
-        when(userRepository.findAll()).thenReturn(users);
+        UserResponse user1 = new UserResponse(1L, "Stepan", "stepan@example.com", 30);
+        UserResponse user2 = new UserResponse(2L, "Anna", "anna@example.com", 25);
+        List<UserResponse> users = Arrays.asList(user1, user2);
+        when(userService.getAll()).thenReturn(users);
 
         mockMvc.perform(get("/api/users"))
                 .andExpect(status().isOk())
@@ -96,8 +94,8 @@ class UserControllerTest {
     @Test
     void getUserById_shouldReturnUser() throws Exception {
         Long id = 1L;
-        User user = User.builder().id(id).name("Stepan").email("stepan@example.com").age(30).build();
-        when(userRepository.findById(id)).thenReturn(Optional.of(user));
+        UserResponse response = new UserResponse(id, "Stepan", "stepan@example.com", 30);
+        when(userService.getById(id)).thenReturn(response);
 
         mockMvc.perform(get("/api/users/{id}", id))
                 .andExpect(status().isOk())
@@ -108,7 +106,7 @@ class UserControllerTest {
     @Test
     void getUserById_shouldReturnNotFound() throws Exception {
         Long id = 1L;
-        when(userRepository.findById(id)).thenReturn(Optional.empty());
+        when(userService.getById(id)).thenThrow(new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND));
 
         mockMvc.perform(get("/api/users/{id}", id))
                 .andExpect(status().isNotFound());
@@ -117,8 +115,7 @@ class UserControllerTest {
     @Test
     void deleteUser_shouldReturnNoContent() throws Exception {
         Long id = 1L;
-        when(userRepository.existsById(id)).thenReturn(true);
-        doNothing().when(userRepository).deleteById(eq(id));
+        doNothing().when(userService).deleteById(eq(id));
 
         mockMvc.perform(delete("/api/users/{id}", id))
                 .andExpect(status().isNoContent());
@@ -127,7 +124,7 @@ class UserControllerTest {
     @Test
     void deleteUser_shouldReturnNotFound() throws Exception {
         Long id = 1L;
-        when(userRepository.existsById(id)).thenReturn(false);
+        doThrow(new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND)).when(userService).deleteById(eq(id));
 
         mockMvc.perform(delete("/api/users/{id}", id))
                 .andExpect(status().isNotFound());
