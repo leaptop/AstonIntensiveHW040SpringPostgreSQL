@@ -72,3 +72,16 @@
         </plugins>
     </build>
 </project>
+
+        <!-- Комментарий: pom.xml - это файл конфигурации для Maven. Maven - инструмент сборки и управления
+        зависимостями для Java-проектов. Под капотом: Maven скачивает jar-файлы (библиотеки) из репозиториев (как
+        Maven Central), разрешает зависимости автоматически и собирает проект в jar/war. Здесь <parent> - наследует
+        от Spring Boot Starter Parent, который предоставляет дефолтные версии зависимостей и плагинов для Spring Boot
+         (фреймворк для быстрой разработки веб-приложений на Java). <dependencies> - список библиотек:
+         spring-boot-starter-web (для REST API, включает Tomcat - встроенный веб-сервер), spring-boot-starter-data-jpa
+         (для работы с БД через JPA - Java Persistence API, абстракция над SQL), postgresql (драйвер для Postgres),
+         lombok (генерирует boilerplate-код как getters/setters на этапе компиляции), spring-boot-starter-test
+         (для тестов с JUnit5 - фреймворк тестирования, Mockito - для моков, MockMvc - для симуляции HTTP-запросов),
+         spring-boot-starter-validation (для валидации данных с аннотациями как @NotBlank). <build> - плагины для
+         сборки, spring-boot-maven-plugin - пакует приложение в исполняемый jar. Команды: mvn clean install - собрать,
+         mvn spring-boot:run - запустить.-->
