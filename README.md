@@ -31,3 +31,4 @@
 +Заменить Hibernate на Spring data JPA.
 +Написать тесты для API(можно делать это при помощи mockMvc или других средств)
 ```
+http://localhost:8080/swagger-ui/index.html

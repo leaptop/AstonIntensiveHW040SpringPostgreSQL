@@ -6,17 +6,17 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 /**
- * Сущность JPA (таблица в БД).
- * @Entity — говорит Hibernate: «это класс, который нужно сохранять в БД».
- * @Table — имя таблицы и ограничения (unique email).
- * Lombok-аннотации генерируют boilerplate-код на этапе компиляции.
+ * JPA-сущность — представляет строку таблицы {@code users}.
+ *
+ * @Entity  — помечает класс как персистентный объект Hibernate.
+ * @Table   — явно задаёт имя таблицы и unique-ограничение на email.
+ * Lombok-аннотации генерируют boilerplate на этапе компиляции.
  */
 @Entity
-@Table(name = "users", uniqueConstraints = @UniqueConstraint(name = "uk_email", columnNames = "email"))
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(name = "users",
+       uniqueConstraints = @UniqueConstraint(name = "uk_users_email", columnNames = "email"))
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 @Builder
 public class User {
 
@@ -33,6 +33,7 @@ public class User {
     @Column(nullable = false)
     private Integer age;
 
+    /** Заполняется автоматически при первом сохранении. */
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
