@@ -1,23 +1,39 @@
-services: # Раздел со списком сервисов (контейнеров), которые docker compose будет поднимать
-  postgres: # Имя сервиса (логическое). По нему можно делать: docker compose logs postgres
-    image: postgres:16 # Какой Docker-образ запустить: официальный Postgres версии 16
-    container_name: user-service-postgres # Явное имя контейнера (вместо автосгенерированного)
-    environment: # Переменные окружения, которые читает entrypoint образа Postgres при первом запуске
-      POSTGRES_DB: user_service_db # Создать БД с таким именем (только при первой инициализации, когда volume пустой)
-      POSTGRES_USER: user_service_user # Создать пользователя с таким именем (при первой инициализации)
-      POSTGRES_PASSWORD: StrongPassword_123 # Пароль для этого пользователя (при первой инициализации)
-    ports: # Проброс портов из контейнера на хост-машину (твой Windows)
-      - "5432:5432" # host:container → на ПК порт 5432 будет направляться в контейнер на порт 5432
-    volumes: # Монтирование томов (постоянного хранилища) внутрь контейнера
-      - pgdata:/var/lib/postgresql/data # Именованный volume "pgdata" подключить как папку data Postgres внутри контейнера
+version: '3'
+services:
+  postgres:
+    image: postgres:16
+    container_name: user-service-postgres
+    environment:
+      POSTGRES_DB: user_service_db
+      POSTGRES_USER: user_service_user
+      POSTGRES_PASSWORD: StrongPassword_123
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+  
+  kafka:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
 
-volumes: # Раздел с объявлением именованных volumes (томов), которыми пользуются сервисы
-  pgdata: # Определяем volume с именем pgdata (реально Docker может создать user-service_pgdata с префиксом проекта)
-
-
-# POSTGRES_DB/USER/PASSWORD срабатывают только при первом запуске, когда volume pgdata ещё пустой.
-#Если ты меняешь пароль в compose, но volume уже с данными — пароль не “обновится сам”.
-#
-#Volume pgdata — это причина, почему база не пропадает при docker compose down.
-#Чтобы удалить и контейнер, и данные базы:
-#docker compose down -v
+volumes:
+  pgdata:
