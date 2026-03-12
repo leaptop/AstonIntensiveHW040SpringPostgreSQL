@@ -20,6 +20,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit-тесты сервисного слоя.
+ * Никакой зависимости от HATEOAS нет — сервис работает с чистыми DTO.
+ */
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
@@ -30,12 +34,12 @@ class UserServiceTest {
     private UserService userService;
 
     private UserRequest request;
-    private User user;
+    private User        user;
 
     @BeforeEach
     void setUp() {
         request = new UserRequest("Stepan", "stepan@example.com", 30);
-        user = User.builder()
+        user    = User.builder()
                 .id(1L)
                 .name("Stepan")
                 .email("stepan@example.com")
@@ -50,8 +54,8 @@ class UserServiceTest {
         UserResponse response = userService.create(request);
 
         assertNotNull(response);
-        assertEquals(1L, response.id());
-        assertEquals("Stepan", response.name());
+        assertEquals(1L,       response.getId());
+        assertEquals("Stepan", response.getName());
         verify(userRepository, times(1)).save(any(User.class));
     }
 
@@ -63,7 +67,7 @@ class UserServiceTest {
         UserResponse response = userService.update(1L, request);
 
         assertNotNull(response);
-        assertEquals(1L, response.id());
+        assertEquals(1L, response.getId());
         verify(userRepository, times(1)).save(any(User.class));
     }
 
@@ -77,14 +81,13 @@ class UserServiceTest {
     @Test
     void getAll_shouldReturnListOfResponses() {
         User user2 = User.builder().id(2L).name("Anna").email("anna@example.com").age(25).build();
-        List<User> users = Arrays.asList(user, user2);
-        when(userRepository.findAll()).thenReturn(users);
+        when(userRepository.findAll()).thenReturn(Arrays.asList(user, user2));
 
         List<UserResponse> responses = userService.getAll();
 
-        assertEquals(2, responses.size());
-        assertEquals("Stepan", responses.get(0).name());
-        assertEquals("Anna", responses.get(1).name());
+        assertEquals(2,        responses.size());
+        assertEquals("Stepan", responses.get(0).getName());
+        assertEquals("Anna",   responses.get(1).getName());
     }
 
     @Test
@@ -94,7 +97,7 @@ class UserServiceTest {
         UserResponse response = userService.getById(1L);
 
         assertNotNull(response);
-        assertEquals(1L, response.id());
+        assertEquals(1L, response.getId());
     }
 
     @Test

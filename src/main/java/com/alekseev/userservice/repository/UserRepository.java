@@ -6,8 +6,7 @@ import org.springframework.stereotype.Repository;
 
 /**
  * Spring Data JPA репозиторий.
- * JpaRepository<User, Long> автоматически даёт методы: save(), findById(), findAll(), deleteById() и т.д.
- * @Repository — необязательно (Spring Data сам регистрирует прокси), но оставляем для ясности.
+ * Автоматически предоставляет: save, findById, findAll, deleteById, existsById и др.
  */
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {

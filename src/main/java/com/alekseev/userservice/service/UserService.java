@@ -49,7 +49,7 @@ public class UserService {
 
     public UserResponse update(Long id, UserRequest request) {
         if (!userRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found: " + id);
         }
         User user = User.builder()
                 .id(id)
@@ -78,10 +78,10 @@ public class UserService {
     }
 
     public void deleteById(Long id) {
-        Optional<User> userOptional = userRepository.findById(id);
-        if (userOptional.isEmpty()) {
+        if (!userRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
+        Optional<User> userOptional = userRepository.findById(id);
         String email = userOptional.get().getEmail();
         userRepository.deleteById(id);
 
@@ -90,5 +90,12 @@ public class UserService {
         message.put("operation", "delete");
         message.put("email", email);
         kafkaTemplate.send("user-events", message);
+    }
+
+    // -------------------------------------------------------------------------
+
+    /** Маппинг Entity → DTO. */
+    private UserResponse toResponse(User user) {
+        return new UserResponse(user.getId(), user.getName(), user.getEmail(), user.getAge());
     }
 }
