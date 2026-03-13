@@ -40,5 +40,10 @@
 чтобы можно было легко изучить и тестировать API через веб-интерфейс.
 Добавить поддержку HATEOAS, чтобы API предоставляло ссылки для навигации по ресурсам.
 
++Домашнее задание 7
+
+Добавить к существующей системе паттерны: gateway api, service discovery, circuit breaker, external configuration - 
+реализации данных паттернов можно найти в модулях spring cloud.
+
 ```
 http://localhost:8080/swagger-ui/index.html
