@@ -10,6 +10,9 @@ spring:
         max-attempts: 6
         initial-interval: 1000
 
+server:
+  port: 8082
+
   # Локальные настройки (переопределяются Config Server, но оставлены для локального запуска)
   datasource:
     url: jdbc:postgresql://localhost:5432/user_service_db
