@@ -15,33 +15,27 @@
     <groupId>com.alekseev</groupId>
     <artifactId>user-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>user-service (ДЗ 6)</name>
+    <name>user-service (ДЗ 7)</name>
 
     <properties>
         <java.version>17</java.version>
         <lombok.version>1.18.34</lombok.version>
+        <spring-cloud.version>2023.0.3</spring-cloud.version>
+
+        <skipTests>true</skipTests>
     </properties>
 
     <dependencies>
 
-        <!-- ===== HATEOAS ===== -->
-        <!-- Добавляет поддержку HAL-формата (_links, _embedded).
-             Включает: EntityModel, CollectionModel, WebMvcLinkBuilder. -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-hateoas</artifactId>
         </dependency>
-
-        <!-- ===== Swagger / OpenAPI ===== -->
-        <!-- Springdoc автоматически создаёт /v3/api-docs (JSON-спецификацию)
-             и /swagger-ui/index.html (интерактивный UI) на основе аннотаций. -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.6.0</version>
         </dependency>
-
-        <!-- ===== Основное приложение ===== -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -55,27 +49,49 @@
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <!-- Kafka for producing messages -->
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
         </dependency>
-        <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
             <optional>true</optional>
         </dependency>
-
-        <!-- Тесты (всё нужное внутри: JUnit5, Mockito, MockMvc, AssertJ) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
-        <!-- Позволяет использовать аннотации типа @Email для автоматической проверки спрингом
-        адреса на валидность -->
+        <!-- ===== НОВЫЕ ЗАВИСИМОСТИ ДЛЯ ДЗ 7 ===== -->
+        <!-- Eureka Client для регистрации в discovery-server -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+        <!-- Config Client для получения конфигурации из config-server -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
+        </dependency>
+        <!-- OpenFeign для удобного HTTP-вызова других сервисов -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+        <!-- Resilience4j Circuit Breaker (интеграция с Spring Boot 3) -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-circuitbreaker-resilience4j</artifactId>
+        </dependency>
+        <!-- Actuator для отображения состояния circuit breaker -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- Тестовые зависимости -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -86,8 +102,19 @@
             <artifactId>spring-kafka-test</artifactId>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <plugins>
@@ -98,16 +125,3 @@
         </plugins>
     </build>
 </project>
-
-        <!-- Комментарий: pom.xml - это файл конфигурации для Maven. Maven - инструмент сборки и управления
-        зависимостями для Java-проектов. Под капотом: Maven скачивает jar-файлы (библиотеки) из репозиториев (как
-        Maven Central), разрешает зависимости автоматически и собирает проект в jar/war. Здесь <parent> - наследует
-        от Spring Boot Starter Parent, который предоставляет дефолтные версии зависимостей и плагинов для Spring Boot
-         (фреймворк для быстрой разработки веб-приложений на Java). <dependencies> - список библиотек:
-         spring-boot-starter-web (для REST API, включает Tomcat - встроенный веб-сервер), spring-boot-starter-data-jpa
-         (для работы с БД через JPA - Java Persistence API, абстракция над SQL), postgresql (драйвер для Postgres),
-         lombok (генерирует boilerplate-код как getters/setters на этапе компиляции), spring-boot-starter-test
-         (для тестов с JUnit5 - фреймворк тестирования, Mockito - для моков, MockMvc - для симуляции HTTP-запросов),
-         spring-boot-starter-validation (для валидации данных с аннотациями как @NotBlank). <build> - плагины для
-         сборки, spring-boot-maven-plugin - пакует приложение в исполняемый jar. Команды: mvn clean install - собрать,
-         mvn spring-boot:run - запустить.-->

@@ -2,46 +2,16 @@ spring:
   application:
     name: user-service
 
-  datasource:
-    url: jdbc:postgresql://localhost:5432/user_service_db
-    username: user_service_user
-    password: StrongPassword_123
+  cloud:
+    config:
+      fail-fast: true
+      retry:
+        max-attempts: 6
+        initial-interval: 1000
 
-  jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    hibernate:
-      ddl-auto: update          # Создаёт / обновляет таблицы автоматически (только для dev!)
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-  kafka:
-    bootstrap-servers: localhost:9092
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-
-# ──────────────────────────────────────────────────────────────────────────────
-# Springdoc OpenAPI (Swagger)
-#
-# api-docs.path   — URL, по которому доступна JSON-спецификация OpenAPI 3.
-# swagger-ui.path — URL, по которому открывается веб-интерфейс Swagger UI.
-#
-# По умолчанию:
-#   JSON: http://localhost:8080/v3/api-docs
-#   UI:   http://localhost:8080/swagger-ui/index.html
-# ──────────────────────────────────────────────────────────────────────────────
-springdoc:
-  api-docs:
-    path: /v3/api-docs
-  swagger-ui:
-    path: /swagger-ui.html         # /swagger-ui.html редиректит на /swagger-ui/index.html
-    operations-sorter: method      # Сортировать эндпоинты по HTTP-методу (DELETE, GET, POST, PUT)
-    tags-sorter: alpha             # Сортировать теги по алфавиту
-    try-it-out-enabled: true       # Кнопка "Try it out" включена по умолчанию
+server:
+  port: 8082
 
 logging:
   level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-    com.alekseev.userservice: INFO
+    com.alekseev.userservice: DEBUG
