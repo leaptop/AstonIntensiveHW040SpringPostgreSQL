@@ -1,8 +1,7 @@
 spring:
   application:
     name: user-service
-  config:
-    import: optional:configserver:http://config:config@localhost:8888
+
   cloud:
     config:
       fail-fast: true
@@ -13,44 +12,6 @@ spring:
 server:
   port: 8082
 
-  # Локальные настройки (переопределяются Config Server, но оставлены для локального запуска)
-  datasource:
-    url: jdbc:postgresql://localhost:5432/user_service_db
-    username: user_service_user
-    password: StrongPassword_123
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-  kafka:
-    bootstrap-servers: localhost:9092
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://eureka:password@localhost:8761/eureka
-  instance:
-    preferIpAddress: true
-
-resilience4j.circuitbreaker:
-  instances:
-    notificationService:
-      slidingWindowSize: 10
-      minimumNumberOfCalls: 5
-      waitDurationInOpenState: 5s
-      failureRateThreshold: 50
-      registerHealthIndicator: true
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,circuitbreakers
-
 logging:
   level:
     com.alekseev.userservice: DEBUG
-    org.springframework.cloud: INFO
